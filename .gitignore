@@ -31,3 +31,8 @@
 # Debug files
 *.dSYM/
 *.su
+
+
+# Ctags and Cscope
+cscope.*
+tags
