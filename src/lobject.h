@@ -2,6 +2,10 @@
 ** $Id: lobject.h,v 2.117 2016/08/01 19:51:24 roberto Exp $
 ** Type definitions for Lua objects
 ** See Copyright Notice in lua.h
+** cn:
+**  对象的定义
+**  在lua中对象变量几乎是统一的，而具体的类型区分通过标记位（tt_）来实现
+**  具体类型的区分在各自定义的描述中
 */
 
 
@@ -18,12 +22,16 @@
 
 /*
 ** Extra tags for non-values
+** cn: 无值的扩展标签
 */
 #define LUA_TPROTO	LUA_NUMTAGS		/* function prototypes */
+                                    /* cn: 方法原始类型 */
 #define LUA_TDEADKEY	(LUA_NUMTAGS+1)		/* removed keys in tables */
+                                            /* cn: 表中已移除的键（死键） */
 
 /*
 ** number of all possible tags (including LUA_TNONE but excluding DEADKEY)
+** cn: 所有可能的标签数量（包含了无值类型但是排除了死键）
 */
 #define LUA_TOTALTAGS	(LUA_TPROTO + 2)
 
@@ -33,6 +41,11 @@
 ** bits 0-3: actual tag (a LUA_T* value)
 ** bits 4-5: variant bits
 ** bit 6: whether value is collectable
+** cn:
+**  标签所用的标记位
+**  0-3位：表示真实的标记类型（类型为LUA_T *） 以下称为父类
+**  4-5位：可变的位 以下称为子类
+**  6位：表示这个值否被回收
 */
 
 
@@ -41,6 +54,11 @@
 ** 0 - Lua function
 ** 1 - light C function
 ** 2 - regular C function (closure)
+** cn:
+**  方法类型的子类
+**  0表示一个lua方法
+**  1表示一个普通的C方法
+**  2表示一个固定的C方法（闭包）
 */
 
 /* Variant tags for functions */
