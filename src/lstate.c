@@ -98,7 +98,7 @@ static unsigned int makeseed (lua_State *L) {
 void luaE_setdebt (global_State *g, l_mem debt) {
   l_mem tb = gettotalbytes(g);
   lua_assert(tb > 0);
-  if (debt < tb - MAX_LMEM)
+  if (debt < tb - MAX_LMEM) //内存不够，则分配剩余所有
     debt = tb - MAX_LMEM;  /* will make 'totalbytes == MAX_LMEM' */
   g->totalbytes = tb - debt;
   g->GCdebt = debt;

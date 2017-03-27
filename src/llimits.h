@@ -81,6 +81,7 @@ typedef LUAI_UACINT l_uacInt;
 
 
 /* internal assertions for in-house debugging */
+/* cn: 使用在内部调试的内部声明 */
 #if defined(lua_assert)
 #define check_exp(c,e)		(lua_assert(c), (e))
 /* to avoid problems with conditions too long */

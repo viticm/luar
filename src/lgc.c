@@ -151,6 +151,9 @@ static int iscleared (global_State *g, const TValue *o) {
 ** being pointed by a black object. (If in sweep phase, clear the black
 ** object to white [sweep it] to avoid other barrier calls for this
 ** same object.)
+** cn:
+** 分界线后将变量提前移到收集器中，这个白色变量正在被一个黑色对象关联。
+** （清扫阶段中会清除这个黑色对象为白色，为了避免其他分界线调用时使用了这个对象）
 */
 void luaC_barrier_ (lua_State *L, GCObject *o, GCObject *v) {
   global_State *g = G(L);
@@ -167,6 +170,8 @@ void luaC_barrier_ (lua_State *L, GCObject *o, GCObject *v) {
 /*
 ** barrier that moves collector backward, that is, mark the black object
 ** pointing to a white object as gray again.
+** cn:
+** 分界线将变量从收集器中移除，标记黑色对象作为灰色对象正在关联一个白色对象。
 */
 void luaC_barrierback_ (lua_State *L, Table *t) {
   global_State *g = G(L);
@@ -181,6 +186,10 @@ void luaC_barrierback_ (lua_State *L, Table *t) {
 ** shared among closures, it is impossible to know the color of all
 ** closures pointing to it. So, we assume that the object being assigned
 ** must be marked.
+** cn:
+** 界定关闭上值的条件
+** 因为上值共享在闭包内，它不可能知道所有正关联它的所有闭包对象的颜色。
+** 因此，我们认为该对象赋值时必须被标记。
 */
 void luaC_upvalbarrier_ (lua_State *L, UpVal *uv) {
   global_State *g = G(L);
@@ -204,6 +213,8 @@ void luaC_fix (lua_State *L, GCObject *o) {
 /*
 ** create a new collectable object (with given type and size) and link
 ** it to 'allgc' list.
+** cn:
+** 创建一个可回收的对象（有指定的类型和大小），并将它连接到'allgc'表中
 */
 GCObject *luaC_newobj (lua_State *L, int tt, size_t sz) {
   global_State *g = G(L);
@@ -897,6 +908,9 @@ static void separatetobefnz (global_State *g, int all) {
 /*
 ** if object 'o' has a finalizer, remove it from 'allgc' list (must
 ** search the list to find it) and link it in 'finobj' list.
+** cn:
+** 如果'o'对象有一个终结对象，则将它从'allgc'列表中移除（需要在列表中找到它）
+** 并且将它移动到'finobj'中
 */
 void luaC_checkfinalizer (lua_State *L, GCObject *o, Table *mt) {
   global_State *g = G(L);
@@ -1099,6 +1113,8 @@ static lu_mem singlestep (lua_State *L) {
 /*
 ** advances the garbage collector until it reaches a state allowed
 ** by 'statemask'
+** cn: 
+** 进行回收直到'statemask'的某个状态
 */
 void luaC_runtilstate (lua_State *L, int statesmask) {
   global_State *g = G(L);
@@ -1154,6 +1170,13 @@ void luaC_step (lua_State *L) {
 ** there may be some objects marked as black, so the collector has
 ** to sweep all objects to turn them back to white (as white has not
 ** changed, nothing will be collected).
+** cn:
+** 执行一个完整的回收循环，如果'isemergency'为真，则设置一个标记避免在想不到
+** 的情况下一些操作会改变解释器的状态（运行结束器和压缩某些结构体时）
+** 在执行收集前，需要检测'keepinvariant'返回，如果其返回是真，则表示有些对象
+** 可能被标记成了黑色，因此收集器会清扫这些对象并将它们转换为白色
+**（如果白色没有改变，则表示没有任何需要收集的对象）
+** 
 */
 void luaC_fullgc (lua_State *L, int isemergency) {
   global_State *g = G(L);

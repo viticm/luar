@@ -62,30 +62,36 @@
 */
 
 /* Variant tags for functions */
+/* 方法类型可变的标记位 */
 #define LUA_TLCL	(LUA_TFUNCTION | (0 << 4))  /* Lua closure */
 #define LUA_TLCF	(LUA_TFUNCTION | (1 << 4))  /* light C function */
 #define LUA_TCCL	(LUA_TFUNCTION | (2 << 4))  /* C closure */
 
 
 /* Variant tags for strings */
+/* 字符串类型可变的标记位 */
 #define LUA_TSHRSTR	(LUA_TSTRING | (0 << 4))  /* short strings */
 #define LUA_TLNGSTR	(LUA_TSTRING | (1 << 4))  /* long strings */
 
 
 /* Variant tags for numbers */
+/* 数字类型可变的标记位 */
 #define LUA_TNUMFLT	(LUA_TNUMBER | (0 << 4))  /* float numbers */
 #define LUA_TNUMINT	(LUA_TNUMBER | (1 << 4))  /* integer numbers */
 
 
 /* Bit mark for collectable types */
+/* 回收类型的标记位 */
 #define BIT_ISCOLLECTABLE	(1 << 6)
 
 /* mark a tag as collectable */
+/* 标记一个对象为可回收的 */
 #define ctb(t)			((t) | BIT_ISCOLLECTABLE)
 
 
 /*
 ** Common type for all collectable objects
+** cn: 所有可回收的对象公用类型
 */
 typedef struct GCObject GCObject;
 
@@ -93,6 +99,11 @@ typedef struct GCObject GCObject;
 /*
 ** Common Header for all collectable objects (in macro form, to be
 ** included in other objects)
+** cn:
+**  所有可回收的对象公用头
+**  next 链表中下一个对象
+**  tt 类型
+**  marked 是否已被标记
 */
 #define CommonHeader	GCObject *next; lu_byte tt; lu_byte marked
 
@@ -110,10 +121,16 @@ struct GCObject {
 /*
 ** Tagged Values. This is the basic representation of values in Lua,
 ** an actual value plus a tag with its type.
+** cn:
+**  标记后的值
+**  这里是lua中数据的基础描述
+**  实际的值都会有一个标记表明它的类型
 */
 
 /*
 ** Union of all Lua values
+** cn:
+**  所有lua数据的联合结构
 */
 typedef union Value {
   GCObject *gc;    /* collectable objects */
@@ -124,15 +141,16 @@ typedef union Value {
   lua_Number n;    /* float numbers */
 } Value;
 
-
+/* 值的字段 */
 #define TValuefields	Value value_; int tt_
 
 
+/* lua一个实际的数据定义 */
 typedef struct lua_TValue {
   TValuefields;
 } TValue;
 
-
+/* 以下是lua中类型相关的宏定义 */
 
 /* macro defining a nil value */
 #define NILCONSTANT	{NULL}, LUA_TNIL
@@ -310,6 +328,7 @@ typedef struct lua_TValue {
 
 
 typedef TValue *StkId;  /* index to stack elements */
+                        /* 栈元素的索引 */
 
 
 
@@ -317,24 +336,30 @@ typedef TValue *StkId;  /* index to stack elements */
 /*
 ** Header for string value; string bytes follow the end of this structure
 ** (aligned according to 'UTString'; see next).
+** cn:
+**  字符串数据的头，字符串的数据在该结构体之后（UTString同理）
 */
 typedef struct TString {
   CommonHeader;
   lu_byte extra;  /* reserved words for short strings; "has hash" for longs */
+                    /* 短字符串保留字段，同时也是长字符串的哈希 */
   lu_byte shrlen;  /* length for short strings */
+                    /* 短字符串的长度 */
   unsigned int hash;
   union {
-    size_t lnglen;  /* length for long strings */
-    struct TString *hnext;  /* linked list for hash table */
+    size_t lnglen;  /* length for long strings */ /* 长字符串长度 */
+    struct TString *hnext;  /* linked list for hash table */ /* 哈希链表 */
   } u;
 } TString;
 
 
 /*
 ** Ensures that address after this type is always fully aligned.
+** 需要确保该类型后的内存对齐
 */
 typedef union UTString {
   L_Umaxalign dummy;  /* ensures maximum alignment for strings */
+                        /* 确保字符串最大对齐 */
   TString tsv;
 } UTString;
 
@@ -342,31 +367,39 @@ typedef union UTString {
 /*
 ** Get the actual string (array of bytes) from a 'TString'.
 ** (Access to 'extra' ensures that value is really a 'TString'.)
+** cn:
+**  获得实际的字符串（字节数组）
+**  访问extra来确认值是不是一个真的TString类型
 */
 #define getstr(ts)  \
   check_exp(sizeof((ts)->extra), cast(char *, (ts)) + sizeof(UTString))
 
 
 /* get the actual string (array of bytes) from a Lua value */
+/* 通过lua值获得实际的字符串 */
 #define svalue(o)       getstr(tsvalue(o))
 
 /* get string length from 'TString *s' */
+/* 获得TString *类型的字符串长度 */
 #define tsslen(s)	((s)->tt == LUA_TSHRSTR ? (s)->shrlen : (s)->u.lnglen)
 
 /* get string length from 'TValue *o' */
+/* 获得TValue *类型的字符串长度 */
 #define vslen(o)	tsslen(tsvalue(o))
 
 
 /*
 ** Header for userdata; memory area follows the end of this structure
 ** (aligned according to 'UUdata'; see next).
+** cn:
+**  userdata头结构 内存从该结构后开始
 */
 typedef struct Udata {
   CommonHeader;
-  lu_byte ttuv_;  /* user value's tag */
+  lu_byte ttuv_;  /* user value's tag */ /* 用户变量标签 */
   struct Table *metatable;
-  size_t len;  /* number of bytes */
-  union Value user_;  /* user value */
+  size_t len;  /* number of bytes */ /* 字节数 */
+  union Value user_;  /* user value */ /* 用户值 */
 } Udata;
 
 
@@ -382,6 +415,8 @@ typedef union UUdata {
 /*
 **  Get the address of memory block inside 'Udata'.
 ** (Access to 'ttuv_' ensures that value is really a 'Udata'.)
+** cn:
+**  获得Udata类型拥有的内存块地址
 */
 #define getudatamem(u)  \
   check_exp(sizeof((u)->ttuv_), (cast(char*, (u)) + sizeof(UUdata)))
@@ -400,27 +435,37 @@ typedef union UUdata {
 
 /*
 ** Description of an upvalue for function prototypes
+** cn:
+**  方法定义类型中的上值描述
 */
 typedef struct Upvaldesc {
   TString *name;  /* upvalue name (for debug information) */
+                    /* 名字 */
   lu_byte instack;  /* whether it is in stack (register) */
+                    /* 在栈什么地方注册的 */
   lu_byte idx;  /* index of upvalue (in stack or in outer function's list) */
+                /* 索引（在栈或外部方法列表中） */
 } Upvaldesc;
 
 
 /*
 ** Description of a local variable for function prototypes
 ** (used for debug information)
+** cn:
+**  一个本地变量方法定义类型描述
 */
 typedef struct LocVar {
   TString *varname;
   int startpc;  /* first point where variable is active */
+                /* 变量开始激活的点 */
   int endpc;    /* first point where variable is dead */
+                /* 变量开始死亡的点 */
 } LocVar;
 
 
 /*
 ** Function Prototypes
+** cn: 方法定义类型
 */
 typedef struct Proto {
   CommonHeader;
@@ -515,9 +560,11 @@ typedef struct Node {
 typedef struct Table {
   CommonHeader;
   lu_byte flags;  /* 1<<p means tagmethod(p) is not present */
-  lu_byte lsizenode;  /* log2 of size of 'node' array */
+  lu_byte lsizenode;  /* log2 of size of 'node' array */ 
+                      /* 当前节点列表的大小为2的lsizenode次幂 */
   unsigned int sizearray;  /* size of 'array' array */
-  TValue *array;  /* array part */
+                           /* 数组的数量 */
+  TValue *array;  /* array part */ /* 数组地址 */
   Node *node;
   Node *lastfree;  /* any free position is before this position */
   struct Table *metatable;

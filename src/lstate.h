@@ -217,6 +217,7 @@ union GCUnion {
 
 
 /* macro to convert a Lua object into a GCObject */
+/* cn: 将一个lua对象转换为一个GCObject的宏定义 */
 #define obj2gco(v) \
 	check_exp(novariant((v)->tt) < LUA_TDEADKEY, (&(cast_u(v)->gc)))
 
