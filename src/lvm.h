@@ -36,10 +36,12 @@
 #define LUA_FLOORN2I		0
 #endif
 
-
+//cn: 将对象转换为字符串，如果没有定义不转换字符串为数字的宏则会尝试将字符串
+//转换成对应的数字，当然字符串转换成字符串可能会失败
 #define tonumber(o,n) \
 	(ttisfloat(o) ? (*(n) = fltvalue(o), 1) : luaV_tonumber_(o,n))
 
+//cn: 同上
 #define tointeger(o,i) \
     (ttisinteger(o) ? (*(i) = ivalue(o), 1) : luaV_tointeger(o,i,LUA_FLOORN2I))
 

@@ -115,65 +115,102 @@ typedef struct CallInfo {
 
 /*
 ** 'global state', shared by all threads of this state
+** cn:
+** 全局状态（全局共享数据）
+** 所有的线程都共享了该状态
 */
 typedef struct global_State {
   lua_Alloc frealloc;  /* function to reallocate memory */
+                        /* cn: 分配内存方法指针 */
   void *ud;         /* auxiliary data to 'frealloc' */
+                    /* cn: 为'frealloc'备用的内存 */
   l_mem totalbytes;  /* number of bytes currently allocated - GCdebt */
+                     /* cn: 当前已使用的内存，为allocated - GCDebt */
   l_mem GCdebt;  /* bytes allocated not yet compensated by the collector */
+                    /* cn: 分配的内存还没有被收集器补偿 */
+
   lu_mem GCmemtrav;  /* memory traversed by the GC */
+                    /* cn: 已经通过GC的内存数量 */
   lu_mem GCestimate;  /* an estimate of the non-garbage memory in use */
+                        /* cn: 预估使用的非垃圾内存大小 */
   stringtable strt;  /* hash table for strings */
+                        /* cn: 字符串哈希 */
   TValue l_registry;
   unsigned int seed;  /* randomized seed for hashes */
+                        /* cn: 哈希随机种子 */
   lu_byte currentwhite;
   lu_byte gcstate;  /* state of garbage collector */
-  lu_byte gckind;  /* kind of GC running */
-  lu_byte gcrunning;  /* true if GC is running */
-  GCObject *allgc;  /* list of all collectable objects */
-  GCObject **sweepgc;  /* current position of sweep in list */
+                    /* cn: 垃圾回收器的状态 */
+  lu_byte gckind;  /* kind of GC running */ /* cn: GC运行的方式 */
+  lu_byte gcrunning;  /* true if GC is running */ /* cn: GC是否在运行 */
+  GCObject *allgc;  /* list of all collectable objects */ /* cn: 所有可回收对象列表 */
+  GCObject **sweepgc;  /* current position of sweep in list */ /* 列表中现在清除的位置 */
   GCObject *finobj;  /* list of collectable objects with finalizers */
-  GCObject *gray;  /* list of gray objects */
+                        /* cn: 被终结的回收对象列表 */
+  GCObject *gray;  /* list of gray objects */ /* cn: 灰色对象列表 */
   GCObject *grayagain;  /* list of objects to be traversed atomically */
+                        /* cn: 固定操作对象列表 */
+
   GCObject *weak;  /* list of tables with weak values */
+                    /* cn: 虚值表列表 */
   GCObject *ephemeron;  /* list of ephemeron tables (weak keys) */
-  GCObject *allweak;  /* list of all-weak tables */
-  GCObject *tobefnz;  /* list of userdata to be GC */
+                        /* cn: 临时表列表（虚键） */
+  GCObject *allweak;  /* list of all-weak tables */ /* cn: 所有虚表列表 */
+  GCObject *tobefnz;  /* list of userdata to be GC */ /* cn: 被GC的用户数据列表 */
   GCObject *fixedgc;  /* list of objects not to be collected */
+                        /* cn: 不需要被收集的对象列表 */
   struct lua_State *twups;  /* list of threads with open upvalues */
+                            /* cn: 拥有开放的上值的线程列表 */
   unsigned int gcfinnum;  /* number of finalizers to call in each GC step */
+                        /* cn: 其他GC步凑中调用到的终结者数量 */
   int gcpause;  /* size of pause between successive GCs */
-  int gcstepmul;  /* GC 'granularity' */
+                /* cn: 在连续的GC过程两次连续间的停顿时间 */
+  int gcstepmul;  /* GC 'granularity' */ /* cn: GC程度 */
   lua_CFunction panic;  /* to be called in unprotected errors */
+                        /* cn: 在未保护的错误下调用 */
   struct lua_State *mainthread;
   const lua_Number *version;  /* pointer to version number */
-  TString *memerrmsg;  /* memory-error message */
+                            /* cn: 版本号指针 */
+  TString *memerrmsg;  /* memory-error message */ /* cn: 内存错误消息 */
   TString *tmname[TM_N];  /* array with tag-method names */
+                        /* cn: 标签方法名数组 */
   struct Table *mt[LUA_NUMTAGS];  /* metatables for basic types */
+                                /* cn: 基本类型的元表 */
   TString *strcache[STRCACHE_N][STRCACHE_M];  /* cache for strings in API */
+                                            /* cn: api中缓存的字符串 */
 } global_State;
 
 
 /*
 ** 'per thread' state
+** cn: 每个线程的状态
 */
 struct lua_State {
   CommonHeader;
-  unsigned short nci;  /* number of items in 'ci' list */
+  unsigned short nci;  /* number of items in 'ci' list */ 
+                        /* cn: ci列表中成员数量 */
   lu_byte status;
   StkId top;  /* first free slot in the stack */
+                /* cn: 栈上开始的空闲点 */
   global_State *l_G;
   CallInfo *ci;  /* call info for current function */
-  const Instruction *oldpc;  /* last pc traced */
+                    /* cn: 当前函数的调用信息 */
+  const Instruction *oldpc;  /* last pc traced */ /* cn: 上次追溯的点 */
   StkId stack_last;  /* last free slot in the stack */
+                    /* cn: 栈最末的空闲点 */
   StkId stack;  /* stack base */
   UpVal *openupval;  /* list of open upvalues in this stack */
+                    /* cn: 在当前栈中开放的上值列表 */
   GCObject *gclist;
   struct lua_State *twups;  /* list of threads with open upvalues */
+                            /* cn: 拥有开放上值的线程列表 */
   struct lua_longjmp *errorJmp;  /* current error recover point */
+                                /* cn: 当前错误恢复点 */
   CallInfo base_ci;  /* CallInfo for first level (C calling Lua) */
+                    /* cn: 优先的调用信息（C调用lua） */
   volatile lua_Hook hook;
   ptrdiff_t errfunc;  /* current error handling function (stack index) */
+                    /* cn: 当前出错的处理方法（栈的索引） */
   int stacksize;
   int basehookcount;
   int hookcount;

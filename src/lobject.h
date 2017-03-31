@@ -302,8 +302,10 @@ typedef struct lua_TValue {
 */
 
 /* from stack to (same) stack */
+/* cn: 同一个栈中数据设置 */
 #define setobjs2s	setobj
 /* to stack (not from same stack) */
+/* cn: 不同栈数据设置，其实都是一个方法，写法上做的区分 */
 #define setobj2s	setobj
 #define setsvalue2s	setsvalue
 #define sethvalue2s	sethvalue

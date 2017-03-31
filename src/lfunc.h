@@ -31,6 +31,8 @@
 
 /*
 ** Upvalues for Lua closures
+** cn:
+** Lua闭包中的上值
 */
 struct UpVal {
   TValue *v;  /* points to stack or to its own value */

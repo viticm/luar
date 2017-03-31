@@ -172,6 +172,7 @@ LUA_API int lua_gettop (lua_State *L) {
 LUA_API void lua_settop (lua_State *L, int idx) {
   StkId func = L->ci->func;
   lua_lock(L);
+  //idx为正向前移动索引,为负向后移动索引
   if (idx >= 0) {
     api_check(L, idx <= L->stack_last - (func + 1), "new top too large");
     while (L->top < (func + 1) + idx)
@@ -180,7 +181,7 @@ LUA_API void lua_settop (lua_State *L, int idx) {
   }
   else {
     api_check(L, -(idx+1) <= (L->top - (func + 1)), "invalid new top");
-    L->top += idx+1;  /* 'subtract' index (index is negative) */
+    L->top += idx+1;  /* 'subtract' index (index is negative) */ /* cn: 负数索引 */
   }
   lua_unlock(L);
 }

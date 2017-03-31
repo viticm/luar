@@ -44,6 +44,7 @@
 
 
 /* thread status */
+/* cn: 线程状态 */
 #define LUA_OK		0
 #define LUA_YIELD	1
 #define LUA_ERRRUN	2
@@ -58,28 +59,31 @@ typedef struct lua_State lua_State;
 
 /*
 ** basic types
+** cn: 基本的类型
 */
-#define LUA_TNONE		(-1)
+#define LUA_TNONE		(-1) //无类型
 
-#define LUA_TNIL		0
-#define LUA_TBOOLEAN		1
-#define LUA_TLIGHTUSERDATA	2
-#define LUA_TNUMBER		3
-#define LUA_TSTRING		4
-#define LUA_TTABLE		5
-#define LUA_TFUNCTION		6
-#define LUA_TUSERDATA		7
-#define LUA_TTHREAD		8
+#define LUA_TNIL		0 //空值
+#define LUA_TBOOLEAN		1 //布尔值
+#define LUA_TLIGHTUSERDATA	2 //用户轻数据
+#define LUA_TNUMBER		3 //数字
+#define LUA_TSTRING		4 //字符串
+#define LUA_TTABLE		5 //表
+#define LUA_TFUNCTION		6 //方法
+#define LUA_TUSERDATA		7 //用户数据（区别轻数据）
+#define LUA_TTHREAD		8 //线程
 
-#define LUA_NUMTAGS		9
+#define LUA_NUMTAGS		9 //类型标记数量
 
 
 
 /* minimum Lua stack available to a C function */
+/* cn: 一个C方法最小的栈大小 */
 #define LUA_MINSTACK	20
 
 
 /* predefined values in the registry */
+/* cn: 在记录中预先定义的一些值 */
 #define LUA_RIDX_MAINTHREAD	1
 #define LUA_RIDX_GLOBALS	2
 #define LUA_RIDX_LAST		LUA_RIDX_GLOBALS
@@ -154,16 +158,17 @@ LUA_API const lua_Number *(lua_version) (lua_State *L);
 
 /*
 ** basic stack manipulation
+** cn: 栈基础操作函数
 */
 LUA_API int   (lua_absindex) (lua_State *L, int idx);
 LUA_API int   (lua_gettop) (lua_State *L);
 LUA_API void  (lua_settop) (lua_State *L, int idx);
 LUA_API void  (lua_pushvalue) (lua_State *L, int idx);
-LUA_API void  (lua_rotate) (lua_State *L, int idx, int n);
+LUA_API void  (lua_rotate) (lua_State *L, int idx, int n); //？
 LUA_API void  (lua_copy) (lua_State *L, int fromidx, int toidx);
 LUA_API int   (lua_checkstack) (lua_State *L, int n);
 
-LUA_API void  (lua_xmove) (lua_State *from, lua_State *to, int n);
+LUA_API void  (lua_xmove) (lua_State *from, lua_State *to, int n); //转移?
 
 
 /*
@@ -191,6 +196,7 @@ LUA_API const void     *(lua_topointer) (lua_State *L, int idx);
 
 /*
 ** Comparison and arithmetic functions
+** cn: 比较算法方法
 */
 
 #define LUA_OPADD	0	/* ORDER TM, ORDER OP */
