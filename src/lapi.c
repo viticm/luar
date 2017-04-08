@@ -965,13 +965,15 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc,
   }
   c.func = L->top - (nargs+1);  /* function to be called */
   if (k == NULL || L->nny > 0) {  /* no continuation or no yieldable? */
+                                    /* cn: 没有协同？ */
     c.nresults = nresults;  /* do a 'conventional' protected call */
     status = luaD_pcall(L, f_call, &c, savestack(L, c.func), func);
   }
   else {  /* prepare continuation (call is already protected by 'resume') */
+            /* cn: 预先的协同，调用已经被resume保护 */
     CallInfo *ci = L->ci;
-    ci->u.c.k = k;  /* save continuation */
-    ci->u.c.ctx = ctx;  /* save context */
+    ci->u.c.k = k;  /* save continuation */ /* cn: 保存协同方法 */
+    ci->u.c.ctx = ctx;  /* save context */ /* cn: 保存上下文 */
     /* save information for error recovery */
     ci->extra = savestack(L, c.func);
     ci->u.c.old_errfunc = L->errfunc;

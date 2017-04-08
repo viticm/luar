@@ -3,6 +3,26 @@
 ** Lua - A Scripting Language
 ** Lua.org, PUC-Rio, Brazil (http://www.lua.org)
 ** See Copyright Notice at the end of this file
+** cn:
+**  lua自身的内部命名含义：
+**      luaG_* 调试有关的接口（debug）ldebug.h
+**      luaD_* 代码运行有关的接口(do) ldo.h
+**      luaT_* 标签方法有关的接口(tag method) ltm.h
+**      luaK_* 代码生成器相关的接口（code generator） lcode.h
+**      luaF_* 方法相关的接口（function）lfunc.h
+**      luaU_* 预编译相关的接口(precompiled) lundump.h
+**      luaV_* 虚拟机相关接口(virtual machine) lvm.h
+**      luaZ_* 分配了的数据流相关接口(buffered streams) lzio.h
+**      luaS_* 字符串（表）相关接口(string table) lstring.h
+**      luaH_* 表（哈希）相关接口(table hash) ltable.h
+**      luaE_* lua状态相关接口(for global state) lstate.h
+**      luaY_* 解释器相关接口(parser) lparser.h
+**      luaP_* 操作符相关接口(operate codes) lopcodes.h
+**      luaO_* 对象相关接口(object) lobject.h
+**      luaM_* 内存相关接口(memory) lmem.h
+**      luaX_* 关键词分析接口(lexical analyzer) llex.h
+**      luaC_* 垃圾回收相关接口(garbage collector) lgc.h
+**      luaL_* 辅助库相关接口（auxiliary for library）lauxlib.h
 */
 
 
@@ -214,18 +234,22 @@ LUA_API const void     *(lua_topointer) (lua_State *L, int idx);
 #define LUA_OPUNM	12
 #define LUA_OPBNOT	13
 
-LUA_API void  (lua_arith) (lua_State *L, int op);
+LUA_API void  (lua_arith) (lua_State *L, int op); //计算方法
 
 #define LUA_OPEQ	0
 #define LUA_OPLT	1
 #define LUA_OPLE	2
 
+//原比较两个对象是否相等
 LUA_API int   (lua_rawequal) (lua_State *L, int idx1, int idx2);
+//比较两个对象：大于、等于、小于
 LUA_API int   (lua_compare) (lua_State *L, int idx1, int idx2, int op);
 
 
 /*
 ** push functions (C -> stack)
+** cn:
+**  入栈方法（C->栈）
 */
 LUA_API void        (lua_pushnil) (lua_State *L);
 LUA_API void        (lua_pushnumber) (lua_State *L, lua_Number n);
@@ -243,6 +267,8 @@ LUA_API int   (lua_pushthread) (lua_State *L);
 
 /*
 ** get functions (Lua -> stack)
+** cn:
+**  获得方法（lua->栈）
 */
 LUA_API int (lua_getglobal) (lua_State *L, const char *name);
 LUA_API int (lua_gettable) (lua_State *L, int idx);
@@ -260,6 +286,8 @@ LUA_API int  (lua_getuservalue) (lua_State *L, int idx);
 
 /*
 ** set functions (stack -> Lua)
+** cn:
+**  设置方法（栈->lua）
 */
 LUA_API void  (lua_setglobal) (lua_State *L, const char *name);
 LUA_API void  (lua_settable) (lua_State *L, int idx);
@@ -274,6 +302,8 @@ LUA_API void  (lua_setuservalue) (lua_State *L, int idx);
 
 /*
 ** 'load' and 'call' functions (load and run Lua code)
+** cn:
+**  加载和调用方法（加载和执行lua代码）
 */
 LUA_API void  (lua_callk) (lua_State *L, int nargs, int nresults,
                            lua_KContext ctx, lua_KFunction k);
