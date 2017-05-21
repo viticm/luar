@@ -651,6 +651,10 @@
 ** functions.  It must be a numerical type; Lua will use 'intptr_t' if
 ** available, otherwise it will use 'ptrdiff_t' (the nearest thing to
 ** 'intptr_t' in C89)
+** cn:
+**  LUA_KCONTEXT表示连续方法的上下文（即方法间的地址距离）
+**  必须是一个数字类型
+**  Lua在允许的情况下尽量使用intptr_t，其他情况下使用ptrdiff_t。
 */
 #define LUA_KCONTEXT	ptrdiff_t
 

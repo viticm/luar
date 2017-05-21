@@ -491,6 +491,10 @@ static void stackerror (lua_State *L) {
 ** The arguments are on the stack, right after the function.
 ** When returns, all the results are on the stack, starting at the original
 ** function position.
+** cn:
+**  调用方法（C或者lua）
+**  该方法从*func调用，它所有的参数都在栈上，并且在该方便的右边。
+**  当返回的时候所有的返回参数都在栈上，它们的开始位置为原方法的位置。
 */
 void luaD_call (lua_State *L, StkId func, int nResults) {
   if (++L->nCcalls >= LUAI_MAXCCALLS)

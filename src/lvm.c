@@ -32,6 +32,7 @@
 
 
 /* limit for table tag-method chains (to avoid loops) */
+/* cn: 表连续标签方法循环限制 */
 #define MAXTAGLOOP	2000
 
 
