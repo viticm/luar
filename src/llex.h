@@ -55,6 +55,7 @@ typedef struct Token {
 
 /* state of the lexer plus state of the parser when shared by all
    functions */
+/* cn: 方法的一些特殊解析状态符号 */
 typedef struct LexState {
   int current;  /* current character (charint) */
   int linenumber;  /* input line counter */

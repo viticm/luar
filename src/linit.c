@@ -22,6 +22,8 @@
 **  lua_pushcfunction(L, luaopen_modname);
 **  lua_setfield(L, -2, modname);
 **  lua_pop(L, 1);  // remove PRELOAD table
+** cn:
+**  这个文件是作为c导出lua的范本使用，即初始化lua中的一些变量和方法。
 */
 
 #include "lprefix.h"
